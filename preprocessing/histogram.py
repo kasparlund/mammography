@@ -4,13 +4,13 @@ from enum import Enum, auto
 import cv2
 
 class HISTOGRAMTYPE(Enum):
-    CLASSIC = auto(),
+    BINS = auto(),
     EVERYVALUE= auto()
     UNIQUE = auto()
 
 class EQC(Enum) :
     HSV  = auto()
-    ALL  = auto()
+    CHX  = auto()    #all channels are mixed into the equalization
         
 class EQ(Enum) :
     NO = auto()
@@ -26,7 +26,7 @@ def RGB2GRAY( im ):
 class ImageColors:
     def __init__(self, im, eqc):
         self._im=im
-        self._eqc = eqc if len(im.shape)==3 and im.shape[2]==3 else EQC.ALL
+        self._eqc = eqc if len(im.shape)==3 and im.shape[2]==3 else EQC.CHX
         self._hsv=None
         
     @property
@@ -66,7 +66,7 @@ class Histogram:
         
     @staticmethod
     def fromBinIntervals( histType, signal, vmin, vmax, nBins ):
-        if histType == HISTOGRAMTYPE.CLASSIC:
+        if histType == HISTOGRAMTYPE.BINS:
             #normal equalization
             hist,bins = np.histogram( signal, np.linspace(vmin, vmax, nBins+1),  (vmin,vmax) )        
             return Histogram( hist, vmin, vmax )
