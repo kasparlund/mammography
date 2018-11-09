@@ -5,6 +5,15 @@ import cv2
 def RGB2GRAY( im ):
     #im = 0.299*R + 0.587*G + 0.114*B
     return 0.299*im[:,:,0] + 0.587*im[:,:,1] + 0.114*im[:,:,2]
+def open_image_16bit2rgb( fn ): 
+    a = np.asarray(PIL.Image.open( fn ).convert("I"))
+    #print(a.shape)
+    print(f"max image value {np.max(a)}")
+    a = np.expand_dims(a,axis=2)
+    a = np.repeat(a, 3, axis=2)
+    #print(a.shape)
+    return Image( pil2tensor(a, np.float32 ).div_(65535) )
+
 
 class ImageReader:
     #outChannels the number of channels that must be returned from open
