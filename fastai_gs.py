@@ -95,8 +95,7 @@ def plot_xy_preds( x, y, y_p, preds, codes, cmap, cmap_preds, figWidth=16 ):
             ax = plt.subplot(g_right[j])
             ax.axis('off')
             ax.imshow(preds[i][j],norm=preds_norm, cmap=cmap_preds) 
-            
-            
+
 def getIO(learn, n, ds_type:DatasetType=DatasetType.Valid, class_mask=None):
     "returns n rows of x, y, predicted y, prediction pr class (classes,width,height)"
     xs,ys,ps,pcs=[],[],[],[]
@@ -106,18 +105,13 @@ def getIO(learn, n, ds_type:DatasetType=DatasetType.Valid, class_mask=None):
         xs.append(image2np(x.px))
         ys.append(image2np(y.px))
         
-        p_prClass = learn.predict(x)[0]
-        #if class_mask is not None: maskassign( p_prClass, 0, class_mask, -1)
+        y_p, y_p2, p_prClass = learn.predict(x)
         
-        y_p = x.__class__( p_prClass.argmax(dim=0)[None] )
         ps.append( image2np(y_p.px) )
-        
-        #if class_mask is not None : rescale(p_prClass,0,class_mask)
         p_prClass = p_prClass.numpy()
-        #if class_mask is not None : np.clip(p_prClass,0, len(class_mask), out=p_prClass )
         pcs.append( p_prClass )
         
-    return xs,ys,ps,pcs    
+    return xs,ys,ps,pcs          
 
 def plotPreds(learn, nrows, codes, code_weights, cmap=plt.cm.tab10, cmap_gray=cc.cm.linear_grey_0_100_c0, ds_type=DatasetType.Valid ):
     class_mask = torch.from_numpy( (code_weights > 0).astype(np.float32) )
